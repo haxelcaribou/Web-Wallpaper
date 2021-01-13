@@ -22,13 +22,15 @@ function constructNodes() {
   // create nodes
   var i;
   var numNodes = wallpaperSettings.numNodes;
-  for (i = 0; i < numNodes; i += 1) nodes.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    vx: 1 * Math.random() - .5,
-    vy: 1 * Math.random() - .5,
-    r: .9 < Math.random() ? 3 + 3 * Math.random() : 1 + 3 * Math.random()
-  });
+  for (i = 0; i < numNodes; i += 1) {
+    nodes.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: 1 * Math.random() - .5,
+      vy: 1 * Math.random() - .5,
+      r: .9 < Math.random() ? 3 + 3 * Math.random() : 1 + 3 * Math.random()
+    });
+  }
 
   nodes.forEach(function(a) {
     nodes.forEach(function(b) {
