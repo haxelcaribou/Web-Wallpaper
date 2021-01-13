@@ -1,6 +1,9 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// TODO: fix the horror that is drawing edges
+
+
 var nodes = [];
 var edges = [];
 
