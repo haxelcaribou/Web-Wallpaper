@@ -5,7 +5,6 @@ const ctx = canvas.getContext("2d");
 // fix the horror that is drawing edges
 // prevent multiple instances of constructNodes running at once
 // general speed improvements
-// add advanced options (line size, node size, node speed)
 
 var nodes = [];
 var edges = [];
@@ -20,7 +19,10 @@ var wallpaperSettings = {
   backgroundColor: "#000",
   nodeColor: "#FFF",
   edgeColor: "#FFF",
-  fps: 0
+  fps: 0,
+  speed: 1,
+  edgeSize: 2.5,
+  nodeSize: 3
 };
 
 
@@ -32,9 +34,9 @@ function constructNodes() {
     nodes.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: 1 * Math.random() - .5,
-      vy: 1 * Math.random() - .5,
-      r: .9 < Math.random() ? 3 + 3 * Math.random() : 1 + 3 * Math.random()
+      vx: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
+      vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
+      r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
     });
   }
 
@@ -119,7 +121,7 @@ function drawEdge(x1, y1, x2, y2) {
     return;
   }
 
-  ctx.lineWidth = (1.0 - len / threshold) * 2.5;
+  ctx.lineWidth = (1.0 - len / threshold) * wallpaperSettings.edgeSize;
   ctx.globalAlpha = 1.0 - len / threshold;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
@@ -229,6 +231,15 @@ window.wallpaperPropertyListener = {
       nodes = [];
       edges = [];
       constructNodes();
+    }
+    if (properties.speed) {
+      wallpaperSettings.speed = properties.speed.value;
+    }
+    if (properties.edgesize) {
+      wallpaperSettings.edgeSize = properties.edgesize.value;
+    }
+    if (properties.nodesize) {
+      wallpaperSettings.nodeSize = properties.nodesize.value;
     }
   },
 };

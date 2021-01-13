@@ -1,10 +1,18 @@
 {
 	"file" : "index.html",
-	"general" : 
+	"general" :
 	{
-		"properties" : 
+		"properties" :
 		{
-			"backgroundcolor" : 
+			"advanced" :
+			{
+				"index" : 4,
+				"order" : 104,
+				"text" : "Advanced Options",
+				"type" : "bool",
+				"value" : false
+			},
+			"backgroundcolor" :
 			{
 				"index" : 1,
 				"order" : 101,
@@ -12,7 +20,7 @@
 				"type" : "color",
 				"value" : "0 0 0"
 			},
-			"edgecolor" : 
+			"edgecolor" :
 			{
 				"index" : 2,
 				"order" : 102,
@@ -20,7 +28,21 @@
 				"type" : "color",
 				"value" : "0.5019607843137255 0.6274509803921569 1"
 			},
-			"nodecolor" : 
+			"edgesize" :
+			{
+				"condition" : "advanced.value == true",
+				"fraction" : true,
+				"index" : 6,
+				"max" : 5,
+				"min" : 0.5,
+				"order" : 106,
+				"precision" : 2,
+				"step" : 0.10000000000000001,
+				"text" : "Edge Size",
+				"type" : "slider",
+				"value" : 2.5
+			},
+			"nodecolor" :
 			{
 				"index" : 3,
 				"order" : 103,
@@ -28,7 +50,21 @@
 				"type" : "color",
 				"value" : "1 1 1"
 			},
-			"numnodes" : 
+			"nodesize" :
+			{
+				"condition" : "advanced.value == true",
+				"fraction" : true,
+				"index" : 7,
+				"max" : 5,
+				"min" : 1,
+				"order" : 107,
+				"precision" : 2,
+				"step" : 0.10000000000000001,
+				"text" : "Node Size",
+				"type" : "slider",
+				"value" : 3
+			},
+			"numnodes" :
 			{
 				"fraction" : false,
 				"index" : 0,
@@ -39,12 +75,26 @@
 				"type" : "slider",
 				"value" : 100
 			},
-			"schemecolor" : 
+			"schemecolor" :
 			{
 				"order" : 0,
 				"text" : "ui_browse_properties_scheme_color",
 				"type" : "color",
 				"value" : "0 0 0"
+			},
+			"speed" :
+			{
+				"condition" : "advanced.value == true",
+				"fraction" : true,
+				"index" : 5,
+				"max" : 5,
+				"min" : 0.5,
+				"order" : 105,
+				"precision" : 2,
+				"step" : 0.10000000000000001,
+				"text" : "Speed",
+				"type" : "slider",
+				"value" : 1
 			}
 		}
 	},
