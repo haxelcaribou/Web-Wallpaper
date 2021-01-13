@@ -1,8 +1,11 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// TODO: fix the horror that is drawing edges
-
+// TODO:
+// fix the horror that is drawing edges
+// prevent multiple instances of constructNodes running at once
+// general speed improvements
+// add advanced options (line size, node size, node speed)
 
 var nodes = [];
 var edges = [];
