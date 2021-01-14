@@ -25,8 +25,25 @@ var wallpaperSettings = {
   nodeSize: 3
 };
 
+function updateNodeSpeed(pSpeed, speed) {
+  nodes.forEach(function(n) {
+    let m = speed / pSpeed;
+    n.vx *= m;
+    n.vy *= m;
+  })
+}
+
+function updateNodeSize(pSize, size) {
+  nodes.forEach(function(n) {
+    let m = size / pSize;
+    n.r *= m;
+  })
+}
 
 function constructNodes() {
+  nodes = [];
+  edges = [];
+
   // create nodes
   var i;
   var numNodes = wallpaperSettings.numNodes;
@@ -228,18 +245,20 @@ window.wallpaperPropertyListener = {
     }
     if (properties.numnodes) {
       wallpaperSettings.numNodes = properties.numnodes.value;
-      nodes = [];
-      edges = [];
       constructNodes();
     }
     if (properties.speed) {
+      let pSpeed = wallpaperSettings.speed;
       wallpaperSettings.speed = properties.speed.value;
+      updateNodeSpeed(pSpeed, wallpaperSettings.speed);
     }
     if (properties.edgesize) {
       wallpaperSettings.edgeSize = properties.edgesize.value;
     }
     if (properties.nodesize) {
+      let pNodeSize = wallpaperSettings.nodeSize
       wallpaperSettings.nodeSize = properties.nodesize.value;
+      updateNodeSize(pNodeSize, wallpaperSettings.nodeSize);
     }
   },
 };
