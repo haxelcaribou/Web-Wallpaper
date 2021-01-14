@@ -2,6 +2,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
+// add quick removal of nodes
 // fix the horror that is drawing edges
 // prevent multiple instances of constructNodes running at once
 // general speed improvements
@@ -26,18 +27,45 @@ var wallpaperSettings = {
 };
 
 function updateNodeSpeed(pSpeed, speed) {
+  let m = speed / pSpeed;
   nodes.forEach(function(n) {
-    let m = speed / pSpeed;
     n.vx *= m;
     n.vy *= m;
   })
 }
 
 function updateNodeSize(pSize, size) {
+  let m = size / pSize;
   nodes.forEach(function(n) {
-    let m = size / pSize;
     n.r *= m;
   })
+}
+
+function updateNodeNum(pNum, num) {
+  let diff = Math.abs(num - pNum);
+  if (diff == 0) {
+    return;
+  } else if (num > pNum) {
+    let i;
+    for (i = 0; i < diff; i += 1) {
+      nodes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
+        vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
+        r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
+      });
+      nodes.forEach(function(a) {
+        let b = nodes[-1];
+        a != b && addEdge({
+          p1: a,
+          p2: b
+        })
+      })
+    }
+  } else {
+    constructNodes();
+  }
 }
 
 function constructNodes() {
@@ -45,8 +73,8 @@ function constructNodes() {
   edges = [];
 
   // create nodes
-  var i;
-  var numNodes = wallpaperSettings.numNodes;
+  let i;
+  let numNodes = wallpaperSettings.numNodes;
   for (i = 0; i < numNodes; i += 1) {
     nodes.push({
       x: Math.random() * canvas.width,
@@ -244,8 +272,9 @@ window.wallpaperPropertyListener = {
       wallpaperSettings.edgeColor = edgeColorAsCSS;
     }
     if (properties.numnodes) {
+      let pNum = wallpaperSettings.numNodes;
       wallpaperSettings.numNodes = properties.numnodes.value;
-      constructNodes();
+      updateNodeNum(pNum, wallpaperSettings.numNodes);
     }
     if (properties.speed) {
       let pSpeed = wallpaperSettings.speed;
