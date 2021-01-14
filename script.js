@@ -2,6 +2,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
+// add color support
 // add quick removal of nodes
 // fix the horror that is drawing edges
 // prevent multiple instances of constructNodes running at once
