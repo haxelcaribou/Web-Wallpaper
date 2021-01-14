@@ -55,14 +55,15 @@ function updateNodeNum(pNum, num) {
         vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
         r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
       });
-      nodes.forEach(function(a) {
-        let b = nodes[-1];
+    }
+    nodes.forEach(function(a) {
+      nodes.forEach(function(b) {
         a != b && addEdge({
           p1: a,
           p2: b
         })
       })
-    }
+    })
   } else {
     constructNodes();
   }
