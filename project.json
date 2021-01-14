@@ -1,10 +1,11 @@
 {
+	"contentrating" : "Everyone",
 	"file" : "index.html",
-	"general" :
+	"general" : 
 	{
-		"properties" :
+		"properties" : 
 		{
-			"advanced" :
+			"advanced" : 
 			{
 				"index" : 4,
 				"order" : 104,
@@ -12,7 +13,7 @@
 				"type" : "bool",
 				"value" : false
 			},
-			"backgroundcolor" :
+			"backgroundcolor" : 
 			{
 				"index" : 1,
 				"order" : 101,
@@ -20,7 +21,7 @@
 				"type" : "color",
 				"value" : "0 0 0"
 			},
-			"edgecolor" :
+			"edgecolor" : 
 			{
 				"index" : 2,
 				"order" : 102,
@@ -28,7 +29,7 @@
 				"type" : "color",
 				"value" : "0.5019607843137255 0.6274509803921569 1"
 			},
-			"edgesize" :
+			"edgesize" : 
 			{
 				"condition" : "advanced.value == true",
 				"fraction" : true,
@@ -42,7 +43,7 @@
 				"type" : "slider",
 				"value" : 2.5
 			},
-			"nodecolor" :
+			"nodecolor" : 
 			{
 				"index" : 3,
 				"order" : 103,
@@ -50,7 +51,7 @@
 				"type" : "color",
 				"value" : "1 1 1"
 			},
-			"nodesize" :
+			"nodesize" : 
 			{
 				"condition" : "advanced.value == true",
 				"fraction" : true,
@@ -64,7 +65,7 @@
 				"type" : "slider",
 				"value" : 3
 			},
-			"numnodes" :
+			"numnodes" : 
 			{
 				"fraction" : false,
 				"index" : 0,
@@ -75,14 +76,14 @@
 				"type" : "slider",
 				"value" : 100
 			},
-			"schemecolor" :
+			"schemecolor" : 
 			{
 				"order" : 0,
 				"text" : "ui_browse_properties_scheme_color",
 				"type" : "color",
 				"value" : "0 0 0"
 			},
-			"speed" :
+			"speed" : 
 			{
 				"condition" : "advanced.value == true",
 				"fraction" : true,
@@ -98,7 +99,10 @@
 			}
 		}
 	},
+	"preview" : "preview.jpg",
+	"tags" : [ "Abstract" ],
 	"title" : "Web",
 	"type" : "web",
-	"version" : 0
+	"version" : 0,
+	"visibility" : "public"
 }
