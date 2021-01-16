@@ -292,7 +292,7 @@ window.wallpaperPropertyListener = {
       updateNodeSize(pNodeSize, wallpaperSettings.nodeSize);
     }
   },
-};
+}
 
 window.onload = function() {
   canvas.width = document.body.clientWidth;
