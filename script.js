@@ -28,6 +28,75 @@ var wallpaperSettings = {
   nodeSize: 3
 };
 
+{
+// nodes.forEach(function(a) {
+//   nodes.forEach(function(b) {
+//     a != b && addEdge({
+//       p1: a,
+//       p2: b
+//     })
+//   })
+// })
+
+// function addEdge(edge) {
+//   let ignoreEdge = false;
+//
+//   edges.forEach(function(e) {
+//     if (e.p1 == edge.p1 && e.p2 == edge.p2) {
+//       ignoreEdge = true;
+//       return;
+//     }
+//
+//     if (e.p1 == edge.p2 && e.p2 == edge.p1) {
+//       ignoreEdge = true;
+//       return;
+//     }
+//   });
+//
+//   if (!ignoreEdge) {
+//     edges.push(edge);
+//   }
+// }
+
+// // draw edges
+// ctx.strokeStyle = wallpaperSettings.edgeColor;
+// edges.forEach(function(e) {
+//   if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2 && Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
+//     if (e.p1.x < canvas.width / 2 && e.p1.y < canvas.height / 2) {
+//       drawEdge(e.p1.x + canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y - canvas.height);
+//     } else if (e.p1.x < canvas.width / 2) {
+//       drawEdge(e.p1.x + canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y + canvas.height);
+//     } else if (e.p1.y < canvas.height / 2) {
+//       drawEdge(e.p1.x - canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y - canvas.height);
+//     } else {
+//       drawEdge(e.p1.x - canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y + canvas.height);
+//     }
+//   } else if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2) {
+//     if (e.p1.x < canvas.width / 2) {
+//       drawEdge(e.p1.x + canvas.width, e.p1.y, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y);
+//     } else {
+//       drawEdge(e.p1.x - canvas.width, e.p1.y, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y);
+//     }
+//   } else if (Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
+//     if (e.p1.y < canvas.height / 2) {
+//       drawEdge(e.p1.x, e.p1.y + canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y - canvas.height);
+//     } else {
+//       drawEdge(e.p1.x, e.p1.y - canvas.height, e.p2.x, e.p2.y);
+//       drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y + canvas.height);
+//     }
+//   } else {
+//     drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y);
+//   }
+// });
+}
+
 function updateNodeSpeed(pSpeed, speed) {
   let m = speed / pSpeed;
   nodes.forEach(function(n) {
@@ -73,7 +142,6 @@ function updateNodeNum(pNum, num) {
 
 function constructNodes() {
   nodes = [];
-  edges = [];
 
   // create nodes
   let i;
@@ -86,36 +154,6 @@ function constructNodes() {
       vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
       r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
     });
-  }
-
-  nodes.forEach(function(a) {
-    nodes.forEach(function(b) {
-      a != b && addEdge({
-        p1: a,
-        p2: b
-      })
-    })
-  })
-
-}
-
-function addEdge(edge) {
-  let ignoreEdge = false;
-
-  edges.forEach(function(e) {
-    if (e.p1 == edge.p1 && e.p2 == edge.p2) {
-      ignoreEdge = true;
-      return;
-    }
-
-    if (e.p1 == edge.p2 && e.p2 == edge.p1) {
-      ignoreEdge = true;
-      return;
-    }
-  });
-
-  if (!ignoreEdge) {
-    edges.push(edge);
   }
 }
 
@@ -186,44 +224,6 @@ function drawNode(x, y, r) {
 function render() {
   ctx.fillStyle = wallpaperSettings.backgroundColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // draw edges
-  ctx.strokeStyle = wallpaperSettings.edgeColor;
-  edges.forEach(function(e) {
-    if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2 && Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
-      if (e.p1.x < canvas.width / 2 && e.p1.y < canvas.height / 2) {
-        drawEdge(e.p1.x + canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y - canvas.height);
-      } else if (e.p1.x < canvas.width / 2) {
-        drawEdge(e.p1.x + canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y + canvas.height);
-      } else if (e.p1.y < canvas.height / 2) {
-        drawEdge(e.p1.x - canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y - canvas.height);
-      } else {
-        drawEdge(e.p1.x - canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y + canvas.height);
-      }
-    } else if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2) {
-      if (e.p1.x < canvas.width / 2) {
-        drawEdge(e.p1.x + canvas.width, e.p1.y, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y);
-      } else {
-        drawEdge(e.p1.x - canvas.width, e.p1.y, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y);
-      }
-    } else if (Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
-      if (e.p1.y < canvas.height / 2) {
-        drawEdge(e.p1.x, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y - canvas.height);
-      } else {
-        drawEdge(e.p1.x, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-        drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y + canvas.height);
-      }
-    } else {
-      drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y);
-    }
-  });
 
   // draw nodes
   ctx.globalAlpha = 1.0;
