@@ -14,9 +14,7 @@ const ctx = canvas.getContext("2d");
 // each node holds an x and y position relative to the section containing it
 
 
-var sections = [
-  []
-];
+var sections = [];
 
 var last = performance.now() / 1000;
 var fpsThreshold = 0;
@@ -25,16 +23,16 @@ var sectionWidth = 100;
 var sectionHeight = 100;
 
 var numSectionsX = 6;
-var numSectionsY = 6;
+var numSectionsY = 4;
 var numSections = numSectionsX * numSectionsY;
 
 var wallpaperSettings = {
-  numNodes: 200,
+  numNodes: 96,
   backgroundColor: "#000",
   nodeColor: "#FFF",
   edgeColor: "#FFF",
   fps: 0,
-  speed: 1,
+  speed: 5,
   edgeSize: 2.5,
   nodeSize: 3
 };
@@ -152,9 +150,7 @@ function updateNodeNum(pNum, num) {
 }
 
 function constructNodes() {
-  sections = [
-    []
-  ];
+  sections = [];
 
   // create nodes
   let i, j, n;
@@ -196,19 +192,45 @@ function step() {
   }
 
   // move nodes
-  nodes.forEach(function(p) {
-    p.x += p.vx;
-    p.y += p.vy;
+  let i, j;
+  for (i = 0; i < sections.length; i++) {
+    row = sections[i];
+    for (j = 0; j < row.length; j++) {
+      nodes = row[j];
+      for (n = 0; n < nodes.length; n++) {
+        node = nodes[n];
 
-    // warp through canvas edges
-    if (p.x <= 0 || p.x >= canvas.width) {
-      p.x = mod(p.x, canvas.width);
-    }
+        node.x += node.vx;
+        node.y += node.vy;
 
-    if (p.y <= 0 || p.y >= canvas.height) {
-      p.y = mod(p.y, canvas.height);
+        // warp through section edges
+        if (node.x < 0) {
+          node.x = mod(node.x, sectionWidth);
+          sections[mod(i - 1, numSectionsX)][j].push(node);
+          nodes.splice(n, 1);
+          continue;
+        } else if (node.x >= sectionWidth) {
+          node.x = mod(node.x, sectionWidth);
+          sections[mod(i + 1, numSectionsX)][j].push(node);
+          nodes.splice(n, 1);
+          continue;
+        }
+
+        if (node.y < 0) {
+          node.y = mod(node.y, sectionHeight);
+          row[mod(j - 1, numSectionsY)].push(node);
+          nodes.splice(n, 1);
+          continue;
+        } else if (node.y >= sectionHeight) {
+          node.y = mod(node.y, sectionHeight);
+          row[mod(j + 1, numSectionsY)].push(node);
+          nodes.splice(n, 1);
+          continue;
+        }
+      }
     }
-  });
+  }
+
 
   render();
 }
@@ -252,7 +274,7 @@ function render() {
   let i, j;
   for (i = 0; i < sections.length; i++) {
     rows = sections[i];
-    xOffset = sectionWidth * (i - 1);
+    xOffset = sectionWidth * i;
     for (j = 0; j < rows.length; j++) {
       yOffset = sectionHeight * j - 1;
       rows[j].forEach(function(p) {
@@ -319,8 +341,9 @@ window.wallpaperPropertyListener = {
 window.onload = function() {
   canvas.width = document.body.clientWidth;
   canvas.height = canvas.clientHeight;
-  sectionWidth = canvas.width / 9;
-  sectionHeight = canvas.height / 9;
+  sectionWidth = canvas.width / numSectionsX;
+  sectionHeight = canvas.height / numSectionsY;
 
+  constructNodes();
   window.requestAnimationFrame(step);
 }
