@@ -22,7 +22,7 @@ var sectionHeight = 100;
 var maxDist = 200;
 
 var columns = 6;
-var rows = 4;
+var rows = 6;
 var numSections = columns * rows;
 
 var wallpaperSettings = {
