@@ -2,17 +2,13 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
-// add edges
+// lines across screen border
 // makes nodes gracefully slide off edge
+// automatic grid sizing
 //
 // add color support
-// add quick removal of nodes
 // prevent multiple instances of constructNodes running at once
 // general speed improvements
-
-// the canvas is split into n * m sections
-// each section holds nodes
-// each node holds an x and y position relative to the section containing it
 
 
 var sections = [];
@@ -40,6 +36,30 @@ var wallpaperSettings = {
   speed: 3
 };
 
+
+function updateNodeSpeed(pSpeed, speed) {
+  let m = speed / pSpeed;
+  for (let row of sections) {
+    for (let nodes of row) {
+      for (let node of nodes) {
+        node.vx *= m;
+        node.vy *= m;
+      }
+    }
+  }
+
+}
+
+function updateNodeSize(pSize, size) {
+  let m = size / pSize;
+  for (let row of sections) {
+    for (let nodes of row) {
+      for (let node of nodes) {
+        node.r *= m;
+      }
+    }
+  }
+}
 
 function constructNodes() {
   sections = [];
@@ -300,7 +320,6 @@ window.wallpaperPropertyListener = {
     if (properties.numnodes) {
       let pNum = wallpaperSettings.numNodes;
       wallpaperSettings.numNodes = properties.numnodes.value;
-      //updateNodeNum(pNum, wallpaperSettings.numNodes);
       constructNodes();
     }
     if (properties.speed) {
