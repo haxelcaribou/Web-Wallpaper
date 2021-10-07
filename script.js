@@ -22,7 +22,7 @@ var sectionHeight = 100;
 var maxDist = 200;
 
 var columns = 6;
-var rows = 4;
+var rows = 6;
 var numSections = columns * rows;
 
 var wallpaperSettings = {
@@ -343,7 +343,7 @@ window.onload = function() {
   canvas.height = canvas.clientHeight;
   sectionWidth = canvas.width / columns;
   sectionHeight = canvas.height / rows;
-  maxDist = Math.min(canvas.width, canvas.height) / 3;
+  maxDist = Math.min(canvas.width, canvas.height) / 6;
 
   constructNodes();
   window.requestAnimationFrame(step);
