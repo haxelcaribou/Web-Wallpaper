@@ -2,10 +2,11 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
-// change data structure
+// add edges
+// makes nodes gracefully slide off edge
+//
 // add color support
 // add quick removal of nodes
-// fix the horror that is drawing edges
 // prevent multiple instances of constructNodes running at once
 // general speed improvements
 
@@ -22,150 +23,40 @@ var fpsThreshold = 0;
 var sectionWidth = 100;
 var sectionHeight = 100;
 
-var numSectionsX = 6;
-var numSectionsY = 4;
-var numSections = numSectionsX * numSectionsY;
+var maxDist = 200;
+
+var columns = 6;
+var rows = 4;
+var numSections = columns * rows;
 
 var wallpaperSettings = {
   numNodes: 96,
   backgroundColor: "#000",
   nodeColor: "#FFF",
   edgeColor: "#FFF",
-  fps: 0,
-  speed: 5,
+  nodeSize: 3,
   edgeSize: 2.5,
-  nodeSize: 3
+  fps: 0,
+  speed: 3
 };
 
-{
-  // nodes.forEach(function(a) {
-  //   nodes.forEach(function(b) {
-  //     a != b && addEdge({
-  //       p1: a,
-  //       p2: b
-  //     })
-  //   })
-  // })
-
-  // function addEdge(edge) {
-  //   let ignoreEdge = false;
-  //
-  //   edges.forEach(function(e) {
-  //     if (e.p1 == edge.p1 && e.p2 == edge.p2) {
-  //       ignoreEdge = true;
-  //       return;
-  //     }
-  //
-  //     if (e.p1 == edge.p2 && e.p2 == edge.p1) {
-  //       ignoreEdge = true;
-  //       return;
-  //     }
-  //   });
-  //
-  //   if (!ignoreEdge) {
-  //     edges.push(edge);
-  //   }
-  // }
-
-  // // draw edges
-  // ctx.strokeStyle = wallpaperSettings.edgeColor;
-  // edges.forEach(function(e) {
-  //   if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2 && Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
-  //     if (e.p1.x < canvas.width / 2 && e.p1.y < canvas.height / 2) {
-  //       drawEdge(e.p1.x + canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y - canvas.height);
-  //     } else if (e.p1.x < canvas.width / 2) {
-  //       drawEdge(e.p1.x + canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y + canvas.height);
-  //     } else if (e.p1.y < canvas.height / 2) {
-  //       drawEdge(e.p1.x - canvas.width, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y - canvas.height);
-  //     } else {
-  //       drawEdge(e.p1.x - canvas.width, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y + canvas.height);
-  //     }
-  //   } else if (Math.abs(e.p1.x - e.p2.x) > canvas.width / 2) {
-  //     if (e.p1.x < canvas.width / 2) {
-  //       drawEdge(e.p1.x + canvas.width, e.p1.y, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x - canvas.width, e.p2.y);
-  //     } else {
-  //       drawEdge(e.p1.x - canvas.width, e.p1.y, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x + canvas.width, e.p2.y);
-  //     }
-  //   } else if (Math.abs(e.p1.y - e.p2.y) > canvas.height / 2) {
-  //     if (e.p1.y < canvas.height / 2) {
-  //       drawEdge(e.p1.x, e.p1.y + canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y - canvas.height);
-  //     } else {
-  //       drawEdge(e.p1.x, e.p1.y - canvas.height, e.p2.x, e.p2.y);
-  //       drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y + canvas.height);
-  //     }
-  //   } else {
-  //     drawEdge(e.p1.x, e.p1.y, e.p2.x, e.p2.y);
-  //   }
-  // });
-}
-
-function updateNodeSpeed(pSpeed, speed) {
-  let m = speed / pSpeed;
-  nodes.forEach(function(n) {
-    n.vx *= m;
-    n.vy *= m;
-  })
-}
-
-function updateNodeSize(pSize, size) {
-  let m = size / pSize;
-  nodes.forEach(function(n) {
-    n.r *= m;
-  })
-}
-
-function updateNodeNum(pNum, num) {
-  let diff = Math.abs(num - pNum);
-  if (diff == 0) {
-    return;
-  } else if (num > pNum) {
-    let i;
-    for (i = 0; i < diff; i += 1) {
-      nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
-        vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
-        r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
-      });
-    }
-    nodes.forEach(function(a) {
-      nodes.forEach(function(b) {
-        a != b && addEdge({
-          p1: a,
-          p2: b
-        })
-      })
-    })
-  } else {
-    constructNodes();
-  }
-}
 
 function constructNodes() {
   sections = [];
 
   // create nodes
-  let i, j, n;
-  let numNodes = wallpaperSettings.numNodes;
-  for (i = 0; i < numSectionsX; i++) {
-    row = [];
-    for (j = 0; j < numSectionsY; j++) {
-      nodes = [];
-      for (n = 0; n < numNodes / numSections; n++) {
+  var i, j, n;
+  for (i = 0; i < rows; i++) {
+    let row = [];
+    for (j = 0; j < columns; j++) {
+      let nodes = [];
+      for (n = 0; n < wallpaperSettings.numNodes / numSections; n++) {
         nodes.push({
           x: Math.random() * sectionWidth,
           y: Math.random() * sectionHeight,
           vx: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
           vy: wallpaperSettings.speed * Math.random() - wallpaperSettings.speed / 2,
-          r: .9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
+          r: 0.9 < Math.random() ? wallpaperSettings.nodeSize + wallpaperSettings.nodeSize * Math.random() : 1 + wallpaperSettings.nodeSize * Math.random()
         });
       }
       row.push(nodes);
@@ -178,8 +69,8 @@ function step() {
   window.requestAnimationFrame(step);
 
   // Figure out how much time has passed since the last animation
-  let now = performance.now() / 1000;
-  let dt = Math.min(now - last, 1);
+  var now = performance.now() / 1000;
+  var dt = Math.min(now - last, 1);
   last = now;
 
   // Abort updating the animation if we have reached the desired FPS
@@ -192,13 +83,13 @@ function step() {
   }
 
   // move nodes
-  let i, j;
+  var i, j, n;
   for (i = 0; i < sections.length; i++) {
-    row = sections[i];
+    let row = sections[i];
     for (j = 0; j < row.length; j++) {
-      nodes = row[j];
+      let nodes = row[j];
       for (n = 0; n < nodes.length; n++) {
-        node = nodes[n];
+        let node = nodes[n];
 
         node.x += node.vx;
         node.y += node.vy;
@@ -206,24 +97,24 @@ function step() {
         // warp through section edges
         if (node.x < 0) {
           node.x = mod(node.x, sectionWidth);
-          sections[mod(i - 1, numSectionsX)][j].push(node);
+          row[mod(j - 1, columns)].push(node);
           nodes.splice(n, 1);
           continue;
         } else if (node.x >= sectionWidth) {
           node.x = mod(node.x, sectionWidth);
-          sections[mod(i + 1, numSectionsX)][j].push(node);
+          row[mod(j + 1, columns)].push(node);
           nodes.splice(n, 1);
           continue;
         }
 
         if (node.y < 0) {
           node.y = mod(node.y, sectionHeight);
-          row[mod(j - 1, numSectionsY)].push(node);
+          sections[mod(i - 1, rows)][j].push(node);
           nodes.splice(n, 1);
           continue;
         } else if (node.y >= sectionHeight) {
           node.y = mod(node.y, sectionHeight);
-          row[mod(j + 1, numSectionsY)].push(node);
+          sections[mod(i + 1, rows)][j].push(node);
           nodes.splice(n, 1);
           continue;
         }
@@ -246,12 +137,12 @@ function mod(a, b) {
 function drawEdge(x1, y1, x2, y2) {
   const len = dist(x1, y1, x2, y2);
 
-  if (len > threshold) {
+  if (len > maxDist) {
     return;
   }
 
-  ctx.lineWidth = (1.0 - len / threshold) * wallpaperSettings.edgeSize;
-  ctx.globalAlpha = 1.0 - len / threshold;
+  ctx.lineWidth = (1.0 - len / maxDist) * wallpaperSettings.edgeSize;
+  ctx.globalAlpha = 1.0 - len / maxDist;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -268,18 +159,108 @@ function render() {
   ctx.fillStyle = wallpaperSettings.backgroundColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // // draw grid
+  // ctx.strokeStyle = wallpaperSettings.edgeColor;
+  // ctx.lineWidth = 3.0;
+  // ctx.globalAlpha = 1.0;
+  // var i, j;
+  // for (i = 0; i < sections.length; i++) {
+  //   let row = sections[i];
+  //   let yOffset = sectionHeight * i;
+  //   for (j = 0; j < row.length; j++) {
+  //     let nodes = row[j]
+  //     let xOffset = sectionWidth * j;
+  //     ctx.beginPath();
+  //     ctx.moveTo(xOffset, yOffset);
+  //     ctx.lineTo(xOffset + sectionWidth, yOffset);
+  //     ctx.moveTo(xOffset, yOffset);
+  //     ctx.lineTo(xOffset, yOffset + sectionWidth);
+  //     ctx.stroke();
+  //   }
+  // }
+
+
+  // draw edges
+  ctx.strokeStyle = wallpaperSettings.edgeColor;
+  var i, j;
+  for (i = 0; i < sections.length; i++) {
+    let row = sections[i];
+    let yOffset1 = sectionHeight * i;
+    for (j = 0; j < row.length; j++) {
+      let nodes = row[j];
+      let xOffset1 = sectionWidth * j;
+
+      let adj = [
+        [i, j],
+        [i, j + 1],
+        [i, j - 1],
+        [i + 1, j],
+        [i + 1, j + 1],
+        [i + 1, j - 1],
+        [i - 1, j],
+        [i - 1, j + 1],
+        [i - 1, j - 1]
+      ];
+
+      for (let a of adj) {
+        a[0] = mod(a[0], rows);
+        a[1] = mod(a[1], columns);
+        let yOffset2 = sectionHeight * a[0];
+        let xOffset2 = sectionWidth * a[1];
+        for (let n1 of nodes) {
+          for (let n2 of sections[a[0]][a[1]]) {
+            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+          }
+        }
+      }
+
+      /**
+      let adj = [
+        [i + 1, j],
+        [i + 1, j + 1],
+        [i, j + 1],
+      ]
+      for (let a of adj) {
+        a[0] = mod(a[0], rows);
+        a[1] = mod(a[1], columns);
+      }
+
+      for (let a of adj) {
+        let yOffset2 = sectionWidth * a[0];
+        let xOffset2 = sectionHeight * a[1];
+        for (let n1 of nodes) {
+          for (let n2 of sections[a[0]][a[1]]) {
+            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+          }
+        }
+      }
+      for (let n1 of nodes) {
+        for (let n2 of nodes) {
+          if (n1.x <= n2.x && n1.y <= n2.y) {
+            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset1, n2.y + yOffset1);
+          }
+        }
+      }
+      **/
+
+
+
+    }
+  }
+
   // draw nodes
   ctx.globalAlpha = 1.0;
   ctx.fillStyle = wallpaperSettings.nodeColor;
-  let i, j;
+  var i, j, n;
   for (i = 0; i < sections.length; i++) {
-    rows = sections[i];
-    xOffset = sectionWidth * i;
-    for (j = 0; j < rows.length; j++) {
-      yOffset = sectionHeight * j - 1;
-      rows[j].forEach(function(p) {
-        drawNode(p.x + xOffset, p.y + yOffset, p.r);
-      });
+    let row = sections[i];
+    let yOffset = sectionHeight * i;
+    for (j = 0; j < row.length; j++) {
+      let xOffset = sectionWidth * j;
+      let nodes = row[j];
+      for (let node of nodes) {
+        drawNode(node.x + xOffset, node.y + yOffset, node.r);
+      }
     }
   }
 
@@ -341,8 +322,9 @@ window.wallpaperPropertyListener = {
 window.onload = function() {
   canvas.width = document.body.clientWidth;
   canvas.height = canvas.clientHeight;
-  sectionWidth = canvas.width / numSectionsX;
-  sectionHeight = canvas.height / numSectionsY;
+  sectionWidth = canvas.width / columns;
+  sectionHeight = canvas.height / rows;
+  maxDist = Math.min(canvas.width, canvas.height) / 3;
 
   constructNodes();
   window.requestAnimationFrame(step);
