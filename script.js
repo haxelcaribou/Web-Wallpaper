@@ -62,12 +62,12 @@ function updateNodeSize(pSize, size) {
 
 function constructNodes() {
   sections = [];
-  var i, j, n;
-  for (i = 0; i < rows; i++) {
+  let nodesPerSection = wallpaperSettings.numNodes / numSections;
+  for (let i = 0; i < rows; i++) {
     let row = [];
-    for (j = 0; j < columns; j++) {
+    for (let j = 0; j < columns; j++) {
       let nodes = [];
-      for (n = 0; n < wallpaperSettings.numNodes / numSections; n++) {
+      for (let n = 0; n < nodesPerSection; n++) {
         nodes.push({
           x: Math.random() * sectionWidth,
           y: Math.random() * sectionHeight,
@@ -105,12 +105,11 @@ function step() {
 }
 
 function moveNodes() {
-  var i, j, n;
-  for (i = 0; i < sections.length; i++) {
+  for (let i = 0; i < rows; i++) {
     let row = sections[i];
-    for (j = 0; j < row.length; j++) {
+    for (let j = 0; j < columns; j++) {
       let nodes = row[j];
-      for (n = 0; n < nodes.length; n++) {
+      for (let n = 0; n < nodes.length; n++) {
         let node = nodes[n];
 
         node.x += node.vx;
@@ -186,11 +185,10 @@ function adjClamp(n) {
 
 function renderEdges() {
   ctx.strokeStyle = wallpaperSettings.edgeColor;
-  var i, j;
-  for (i = 0; i < sections.length; i++) {
+  for (let i = 0; i < rows; i++) {
     let row = sections[i];
     let yOffset1 = sectionHeight * i;
-    for (j = 0; j < row.length; j++) {
+    for (let j = 0; j < columns; j++) {
       let nodes = row[j];
       let xOffset1 = sectionWidth * j;
 
@@ -238,11 +236,10 @@ function renderEdges() {
 function renderNodes() {
   ctx.globalAlpha = 1.0;
   ctx.fillStyle = wallpaperSettings.nodeColor;
-  var i, j, n;
-  for (i = 0; i < sections.length; i++) {
+  for (let i = 0; i < rows; i++) {
     let row = sections[i];
     let yOffset = sectionHeight * i;
-    for (j = 0; j < row.length; j++) {
+    for (let j = 0; j < columns; j++) {
       let xOffset = sectionWidth * j;
       let nodes = row[j];
       for (let node of nodes) {
@@ -268,11 +265,10 @@ function renderGrid() {
   ctx.strokeStyle = wallpaperSettings.edgeColor;
   ctx.lineWidth = 3.0;
   ctx.globalAlpha = 1.0;
-  var i, j;
-  for (i = 0; i < sections.length; i++) {
+  for (let i = 0; i < rows; i++) {
     let row = sections[i];
     let yOffset = sectionHeight * i;
-    for (j = 0; j < row.length; j++) {
+    for (let j = 0; j < columns; j++) {
       let nodes = row[j]
       let xOffset = sectionWidth * j;
       ctx.beginPath();
