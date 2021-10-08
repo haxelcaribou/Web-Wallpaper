@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 // TODO:
 // edges near corners
 // automatic grid sizing
+// node constuction with exact number
 //
 // add color support
 // prevent multiple instances of constructNodes running at once
@@ -32,7 +33,7 @@ var wallpaperSettings = {
   nodeSize: 3,
   edgeSize: 2.5,
   fps: 0,
-  speed: 3
+  speed: 1
 };
 
 
@@ -174,6 +175,16 @@ function drawNode(x, y, r) {
   ctx.fill();
 }
 
+function adjClamp(n) {
+  if (n < -1) {
+    return -1;
+  }
+  if (n > 1) {
+    return 1;
+  }
+  return 0;
+}
+
 function renderEdges() {
   ctx.strokeStyle = wallpaperSettings.edgeColor;
   var i, j;
@@ -201,23 +212,22 @@ function renderEdges() {
         a[1] = mod(a[1], columns);
         let yOffset2 = sectionHeight * a[0];
         let xOffset2 = sectionWidth * a[1];
+        let yDiff = adjClamp(i - a[0]);
+        let xDiff = adjClamp(j - a[1]);
         for (let n1 of nodes) {
+          let xPos1 = n1.x + xOffset1;
+          let yPos1 = n1.y + yOffset1;
           for (let n2 of sections[a[0]][a[1]]) {
             // can I pull this out of the loop?
-            if (Math.abs(i - a[0]) <= 1 && Math.abs(j - a[1]) <= 1) {
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
-            } else if (i - a[0] > 1 && Math.abs(j - a[1]) <= 1) {
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1 - canvas.height, n2.x + xOffset2, n2.y + yOffset2);
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2 + canvas.height);
-            } else if (i - a[0] < -1 && Math.abs(j - a[1]) <= 1) {
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1 + canvas.height, n2.x + xOffset2, n2.y + yOffset2);
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2 - canvas.height);
-            } else if (Math.abs(i - a[0]) <= 1 && j - a[1] > 1) {
-              drawEdge(n1.x + xOffset1 - canvas.width, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2 + canvas.width, n2.y + yOffset2);
-            } else if (Math.abs(i - a[0]) <= 1 && j - a[1] < -1) {
-              drawEdge(n1.x + xOffset1 + canvas.width, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
-              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2 - canvas.width, n2.y + yOffset2);
+            if (xDiff == 0 && yDiff == 0) {
+              drawEdge(xPos1, yPos1, n2.x + xOffset2, n2.y + yOffset2);
+            } else if (xDiff != 0 || yDiff != 0) {
+              drawEdge(xPos1 - canvas.width * xDiff, yPos1 - canvas.height * yDiff, n2.x + xOffset2, n2.y + yOffset2);
+              drawEdge(xPos1, yPos1, n2.x + xOffset2 + canvas.width * xDiff, n2.y + yOffset2 + canvas.height * yDiff);
+              if (xDiff != 0 && yDiff != 0) {
+                drawEdge(xPos1 - canvas.width * xDiff, yPos1, n2.x + xOffset2, n2.y + yOffset2 + canvas.height * yDiff);
+                drawEdge(xPos1, yPos1 - canvas.height * yDiff, n2.x + xOffset2 + canvas.width * xDiff, n2.y + yOffset2);
+              }
             }
           }
         }
@@ -278,6 +288,7 @@ function renderGrid() {
 
 function render() {
   ctx.fillStyle = wallpaperSettings.backgroundColor;
+  ctx.globalAlpha = 1.0;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   renderEdges();
