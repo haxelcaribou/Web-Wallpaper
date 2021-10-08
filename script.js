@@ -63,8 +63,6 @@ function updateNodeSize(pSize, size) {
 
 function constructNodes() {
   sections = [];
-
-  // create nodes
   var i, j, n;
   for (i = 0; i < rows; i++) {
     let row = [];
@@ -215,7 +213,6 @@ function renderEdges() {
 }
 
 function renderNodes() {
-  // draw nodes
   ctx.globalAlpha = 1.0;
   ctx.fillStyle = wallpaperSettings.nodeColor;
   var i, j, n;
@@ -227,13 +224,24 @@ function renderNodes() {
       let nodes = row[j];
       for (let node of nodes) {
         drawNode(node.x + xOffset, node.y + yOffset, node.r);
+
+        if (node.x + xOffset - node.r < 0) {
+          drawNode(node.x + xOffset + canvas.width, node.y + yOffset, node.r);
+        } else if (node.x + xOffset + node.r > canvas.width) {
+          drawNode(node.x + xOffset - canvas.width, node.y + yOffset, node.r);
+        }
+
+        if (node.y + yOffset - node.r < 0) {
+          drawNode(node.x + xOffset, node.y + yOffset + canvas.height, node.r);
+        } else if (node.y + yOffset + node.r > canvas.height) {
+          drawNode(node.x + xOffset, node.y + yOffset - canvas.height, node.r);
+        }
       }
     }
   }
 }
 
 function renderGrid() {
-  // draw grid
   ctx.strokeStyle = wallpaperSettings.edgeColor;
   ctx.lineWidth = 3.0;
   ctx.globalAlpha = 1.0;
