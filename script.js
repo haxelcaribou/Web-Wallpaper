@@ -2,8 +2,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
-// lines across screen border
-// makes nodes gracefully slide off edge
+// edges near corners
 // automatic grid sizing
 //
 // add color support
@@ -204,7 +203,22 @@ function renderEdges() {
         let xOffset2 = sectionWidth * a[1];
         for (let n1 of nodes) {
           for (let n2 of sections[a[0]][a[1]]) {
-            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+            // can I pull this out of the loop?
+            if (Math.abs(i - a[0]) <= 1 && Math.abs(j - a[1]) <= 1) {
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+            } else if (i - a[0] > 1 && Math.abs(j - a[1]) <= 1) {
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1 - canvas.height, n2.x + xOffset2, n2.y + yOffset2);
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2 + canvas.height);
+            } else if (i - a[0] < -1 && Math.abs(j - a[1]) <= 1) {
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1 + canvas.height, n2.x + xOffset2, n2.y + yOffset2);
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2 - canvas.height);
+            } else if (Math.abs(i - a[0]) <= 1 && j - a[1] > 1) {
+              drawEdge(n1.x + xOffset1 - canvas.width, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2 + canvas.width, n2.y + yOffset2);
+            } else if (Math.abs(i - a[0]) <= 1 && j - a[1] < -1) {
+              drawEdge(n1.x + xOffset1 + canvas.width, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
+              drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2 - canvas.width, n2.y + yOffset2);
+            }
           }
         }
       }
