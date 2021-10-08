@@ -102,7 +102,12 @@ function step() {
     fpsThreshold -= 1.0 / wallpaperSettings.fps;
   }
 
-  // move nodes
+  moveNodes();
+
+  render();
+}
+
+function moveNodes() {
   var i, j, n;
   for (i = 0; i < sections.length; i++) {
     let row = sections[i];
@@ -141,9 +146,6 @@ function step() {
       }
     }
   }
-
-
-  render();
 }
 
 function dist(x1, y1, x2, y2) {
@@ -175,32 +177,7 @@ function drawNode(x, y, r) {
   ctx.fill();
 }
 
-function render() {
-  ctx.fillStyle = wallpaperSettings.backgroundColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // // draw grid
-  // ctx.strokeStyle = wallpaperSettings.edgeColor;
-  // ctx.lineWidth = 3.0;
-  // ctx.globalAlpha = 1.0;
-  // var i, j;
-  // for (i = 0; i < sections.length; i++) {
-  //   let row = sections[i];
-  //   let yOffset = sectionHeight * i;
-  //   for (j = 0; j < row.length; j++) {
-  //     let nodes = row[j]
-  //     let xOffset = sectionWidth * j;
-  //     ctx.beginPath();
-  //     ctx.moveTo(xOffset, yOffset);
-  //     ctx.lineTo(xOffset + sectionWidth, yOffset);
-  //     ctx.moveTo(xOffset, yOffset);
-  //     ctx.lineTo(xOffset, yOffset + sectionWidth);
-  //     ctx.stroke();
-  //   }
-  // }
-
-
-  // draw edges
+function renderEdges() {
   ctx.strokeStyle = wallpaperSettings.edgeColor;
   var i, j;
   for (i = 0; i < sections.length; i++) {
@@ -233,41 +210,11 @@ function render() {
           }
         }
       }
-
-      /**
-      let adj = [
-        [i + 1, j],
-        [i + 1, j + 1],
-        [i, j + 1],
-      ]
-      for (let a of adj) {
-        a[0] = mod(a[0], rows);
-        a[1] = mod(a[1], columns);
-      }
-
-      for (let a of adj) {
-        let yOffset2 = sectionWidth * a[0];
-        let xOffset2 = sectionHeight * a[1];
-        for (let n1 of nodes) {
-          for (let n2 of sections[a[0]][a[1]]) {
-            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset2, n2.y + yOffset2);
-          }
-        }
-      }
-      for (let n1 of nodes) {
-        for (let n2 of nodes) {
-          if (n1.x <= n2.x && n1.y <= n2.y) {
-            drawEdge(n1.x + xOffset1, n1.y + yOffset1, n2.x + xOffset1, n2.y + yOffset1);
-          }
-        }
-      }
-      **/
-
-
-
     }
   }
+}
 
+function renderNodes() {
   // draw nodes
   ctx.globalAlpha = 1.0;
   ctx.fillStyle = wallpaperSettings.nodeColor;
@@ -283,7 +230,36 @@ function render() {
       }
     }
   }
+}
 
+function renderGrid() {
+  // draw grid
+  ctx.strokeStyle = wallpaperSettings.edgeColor;
+  ctx.lineWidth = 3.0;
+  ctx.globalAlpha = 1.0;
+  var i, j;
+  for (i = 0; i < sections.length; i++) {
+    let row = sections[i];
+    let yOffset = sectionHeight * i;
+    for (j = 0; j < row.length; j++) {
+      let nodes = row[j]
+      let xOffset = sectionWidth * j;
+      ctx.beginPath();
+      ctx.moveTo(xOffset, yOffset);
+      ctx.lineTo(xOffset + sectionWidth, yOffset);
+      ctx.moveTo(xOffset, yOffset);
+      ctx.lineTo(xOffset, yOffset + sectionWidth);
+      ctx.stroke();
+    }
+  }
+}
+
+function render() {
+  ctx.fillStyle = wallpaperSettings.backgroundColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  renderEdges();
+  renderNodes();
 }
 
 window.wallpaperPropertyListener = {
