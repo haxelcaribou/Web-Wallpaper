@@ -26,7 +26,7 @@ var rows = 6;
 var numSections = columns * rows;
 
 var wallpaperSettings = {
-  numNodes: 96,
+  numNodes: 100,
   backgroundColor: "#000",
   nodeColor: "#FFF",
   edgeColor: "#FFF",
