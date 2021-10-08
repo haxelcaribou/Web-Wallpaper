@@ -2,7 +2,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // TODO:
-// edges near corners
 // automatic grid sizing
 // node constuction with exact number
 //
@@ -26,7 +25,7 @@ var rows = 6;
 var numSections = columns * rows;
 
 var wallpaperSettings = {
-  numNodes: 96,
+  numNodes: 100,
   backgroundColor: "#000",
   nodeColor: "#FFF",
   edgeColor: "#FFF",
