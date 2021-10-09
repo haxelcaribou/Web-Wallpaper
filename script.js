@@ -174,13 +174,10 @@ function drawNode(x, y, r) {
 }
 
 function adjClamp(n) {
-  if (n < -1) {
-    return -1;
+  if (n >= -1 && n <= 1) {
+    return -0;
   }
-  if (n > 1) {
-    return 1;
-  }
-  return 0;
+  return Math.sign(n);
 }
 
 function renderEdges() {
